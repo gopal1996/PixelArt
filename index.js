@@ -1,6 +1,6 @@
 function Pixelart(element, row, col) {
     this.activeColor = '#000';
-    this.eraserColor = '#eee';
+    this.eraserColor = '#fff';
     this.isEraserEnabled = false;
     this.rootElement = document.querySelector(element);
     this.row = row;
@@ -76,18 +76,23 @@ Pixelart.prototype.bindEvent = function() {
         if(event.target.dataset['resize']) {
             context.row = Number(document.querySelector('#height').value);
             context.col = Number(document.querySelector('#width').value);
+            context.cellTrack = [];
+            context.cellCount = 0;
             context.init()
         }
 
         if(event.target.dataset['themecolor']) {
             document.querySelector('.leftbar').style.backgroundColor = event.target.style.backgroundColor;
             document.querySelector('.rightbar--draw-button').style.backgroundColor = event.target.style.backgroundColor;
+            document.querySelectorAll('.btn-custom').forEach(element => element.style.backgroundColor = event.target.style.backgroundColor);
         }
 
         if(event.target.dataset['cellcolor']) {
             context.activeColor = event.target.dataset['cellcolor'];
-            document.querySelector('#colorpicker').value = event.target.dataset['cellcolor'];
-            document.querySelector('#colorpicker').style.backgroundColor = event.target.dataset['cellcolor'];
+            document.querySelectorAll('#colorpicker').forEach(element => {
+                element.value = context.activeColor;
+                element.style.backgroundColor = context.activeColor;
+            })
         }
 
         if(event.target.dataset['customcolor']){
@@ -95,10 +100,13 @@ Pixelart.prototype.bindEvent = function() {
         }
 
         if(event.target.dataset['frame']==='circle') {
+            document.querySelector('.rightbar--frames__circle').style.backgroundColor = '#000';
+            document.querySelector('.rightbar--frames__box').style.backgroundColor = '#fff';
             document.querySelectorAll('.cell').forEach(value => value.classList.add('cell-rounded'))
         }
         if(event.target.dataset['frame']==='box') {
-            console.log(event.target.dataset['frame'])
+            document.querySelector('.rightbar--frames__box').style.backgroundColor = '#000';
+            document.querySelector('.rightbar--frames__circle').style.backgroundColor = '#fff';
             document.querySelectorAll('.cell').forEach(value => value.classList.remove('cell-rounded'))
         }
     })
@@ -136,8 +144,9 @@ Pixelart.prototype.leftBar = function() {
                 }
                 break;
             case 'clear':
-                document.querySelectorAll('div[data-cord]').forEach(value => value.style.backgroundColor='')
+                document.querySelectorAll('div[data-cord]').forEach(value => value.style.backgroundColor='');
                 context.cellTrack = [];
+                context.cellCount = 0;
                 break;
             case 'download':
                 context.downloadGrid();
@@ -153,6 +162,7 @@ Pixelart.prototype.leftBar = function() {
                 break;
             default:
                 context.printTrack();
+                context.animate();
         }
     })
 }
@@ -174,6 +184,7 @@ Pixelart.prototype.userTrack = function(row, col, id) {
         row: row,
         col: col
     }
+    console.log(newData)
     this.cellTrack.push(newData);
 }
 
@@ -183,7 +194,7 @@ Pixelart.prototype.printTrack = function(){
 }
 
 Pixelart.prototype.undo = function(){
-    if(this.cellCount > 1){
+    if(this.cellCount >= 1){
         this.cellCount--;
         this.cellTrack.forEach(value => {
             if(value.id === this.cellCount) {
@@ -202,6 +213,16 @@ Pixelart.prototype.redo = function(){
         })
         this.cellCount++;
     }
+}
+
+Pixelart.prototype.animate = function(){
+    document.querySelectorAll('div[data-cord]').forEach(value => value.style.backgroundColor='');
+    let context = this;
+    setTimeout(function(){
+        context.cellTrack.forEach(value => document.querySelector(`[data-cord='col-${value.row}-${value.col}']`).style.backgroundColor = context.activeColor)
+        // this.cellTrack.forEach(value => console.log(value))
+    }, 2000)
+    
 }
 
 

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    
     <link rel="stylesheet" href="./style.css">
     <title>PixelArt</title>
 </head>
@@ -41,6 +42,9 @@
             <div class="leftbar--help">
                 <i class="fa fa-question-circle" aria-hidden="true" data-menu="help"></i>
             </div>
+            <div class="leftbar--gridcoord">
+                <span id="rownum">1</span><span>:</span><span id="colnum">1</span>
+            </div>
         </div>
         <div class="mainboard-container">
             <div class="mainboard"></div>
@@ -71,52 +75,93 @@
                 </div>
             </div>
             <div class="rightbar--color">
-                <div class="rightbar--color-box">
-                    <div class="color-list" data-cellcolor="#000000" style="background-color: #000000;"></div>
-                    <div class="color-list" data-cellcolor="#ff6347" style="background-color: #ff6347;"></div>
-                    <div class="color-list" data-cellcolor="#1e90ff" style="background-color: #1e90ff;"></div>
-                    <div class="color-list" data-cellcolor="#3cb371" style="background-color: #3cb371;"></div>
-                    <div class="color-list" data-cellcolor="#808080" style="background-color: #808080;"></div>
-                    <div class="color-list" data-cellcolor="#6a5acd" style="background-color: #6a5acd;"></div>
+                <div class="dropdown">
+                    <button class="btn-custom">Colors</button>
+                    <div class="dropdown-content">
+                        <div class="rightbar--color-box">
+                            <div class="color-list" data-cellcolor="#000000" style="background-color: #000000;"></div>
+                            <div class="color-list" data-cellcolor="#ff6347" style="background-color: #ff6347;"></div>
+                            <div class="color-list" data-cellcolor="#1e90ff" style="background-color: #1e90ff;"></div>
+                        </div>
+                        <div class="rightbar--color-box">
+                            <div class="color-list" data-cellcolor="#ff4500" style="background-color: #ff4500;"></div>
+                            <div class="color-list" data-cellcolor="#ffa500" style="background-color: #ffa500;"></div>
+                            <div class="color-list" data-cellcolor="#ffff00" style="background-color: #ffff00;"></div>
+                        </div>
+                        <div class="rightbar--color-box" style="width: 50%;">
+                            <input type="color" id="colorpicker" name="colorpicker" value="#000000" data-customcolor="true">
+                        </div>
+                    </div>
                 </div>
-                <div class="rightbar--color-box">
-                    <div class="color-list" data-cellcolor="#ee82ee" style="background-color: #ee82ee;"></div>
-                    <div class="color-list" data-cellcolor="#008080" style="background-color: #008080;"></div>
-                    <div class="color-list" data-cellcolor="#20b2aa" style="background-color: #20b2aa;"></div>
-                    <div class="color-list" data-cellcolor="#ff4500" style="background-color: #ff4500;"></div>
-                    <div class="color-list" data-cellcolor="#ffa500" style="background-color: #ffa500;"></div>
-                    <div class="color-list" data-cellcolor="#ffff00" style="background-color: #ffff00;"></div>
-                </div>
-                <div class="rightbar--color-box" style="width: 50%;">
-                    <input type="color" id="colorpicker" name="colorpicker" value="#000000" data-customcolor="true">
-                </div>
+                <div class="rightbar--lg">
+                    <p>Colors</p>
+                    <div class="rightbar--color-box">
+                        <div class="color-list" data-cellcolor="#000000" style="background-color: #000000;"></div>
+                        <div class="color-list" data-cellcolor="#ff6347" style="background-color: #ff6347;"></div>
+                        <div class="color-list" data-cellcolor="#1e90ff" style="background-color: #1e90ff;"></div>
+                    </div>
+                    <div class="rightbar--color-box">
+                        <div class="color-list" data-cellcolor="#ff4500" style="background-color: #ff4500;"></div>
+                        <div class="color-list" data-cellcolor="#ffa500" style="background-color: #ffa500;"></div>
+                        <div class="color-list" data-cellcolor="#ffff00" style="background-color: #ffff00;"></div>
+                    </div>
+                    <div class="rightbar--color-box" style="width: 50%;">
+                        <input type="color" id="colorpicker" name="colorpicker" value="#000000" data-customcolor="true">
+                    </div>
+                </div>              
             </div>
-            <div class="rightbar--animation">
-                <p>Animation</p>
-                <label class="switch">
-                    <input type="checkbox">
-                    <span class="slider round"></span>
-                </label>
-            </div>
+
             <div class="rightbar--frames">
-                <p>Frame</p>
-                <div class="rightbar--frames-container">
+                <div class="dropdown">
+                    <button class="btn-custom">Frames</button>
+                    <div class="dropdown-content">
+                        <div class="rightbar--frames-container">
+                            <div class="rightbar--frames__box" data-frame="box"></div>
+                            <div class="rightbar--frames__circle" data-frame="circle"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="rightbar--frames-container rightbar--frames-container-lg">
+                    <p>Frames</p>
                     <div class="rightbar--frames__box" data-frame="box"></div>
                     <div class="rightbar--frames__circle" data-frame="circle"></div>
                 </div>
             </div>
+
             <div class="rightbar--themes">
-                <p>Themes</p>
-                <div class="rightbar--themes__cont">
+                <div class="dropdown">
+                    <button class="btn-custom">Themes</button>
+                    <div class="dropdown-content">
+                        <div class="rightbar--themes__cont">
+                            <div class="rightbar--color-box">
+                                <div class="color-list" data-themecolor="#000000" style="background-color: #000000;"></div>
+                                <div class="color-list" data-themecolor="#ff6347" style="background-color: #ff6347;"></div>
+                                <div class="color-list" data-themecolor="#1e90ff" style="background-color: #1e90ff;"></div>
+                            </div>
+                            <div class="rightbar--color-box">
+                                <div class="color-list" data-themecolor="#3cb371" style="background-color: #3cb371;"></div>
+                                <div class="color-list" data-themecolor="#808080" style="background-color: #808080;"></div>
+                                <div class="color-list" data-themecolor="#6a5acd" style="background-color: #6a5acd;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="rightbar--themes__cont rightbar--themes__cont-lg">
+                    <p>Themes</p>
                     <div class="rightbar--color-box">
                         <div class="color-list" data-themecolor="#000000" style="background-color: #000000;"></div>
                         <div class="color-list" data-themecolor="#ff6347" style="background-color: #ff6347;"></div>
                         <div class="color-list" data-themecolor="#1e90ff" style="background-color: #1e90ff;"></div>
+                    </div>
+                    <div class="rightbar--color-box">
                         <div class="color-list" data-themecolor="#3cb371" style="background-color: #3cb371;"></div>
                         <div class="color-list" data-themecolor="#808080" style="background-color: #808080;"></div>
                         <div class="color-list" data-themecolor="#6a5acd" style="background-color: #6a5acd;"></div>
                     </div>
                 </div>
+                
             </div>
         </div>
     </div>
