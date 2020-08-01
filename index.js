@@ -15,6 +15,7 @@ function Pixelart(element, row, col) {
     this.bindRightMenu();
     this.bindcolorPicker();
     this.bindGridWidth();
+    this.mobileDrag();
 }
 
 Pixelart.prototype.init = function() {
@@ -75,47 +76,39 @@ Pixelart.prototype.bindEvent = function() {
         
     });
 
-    this.rootElement.addEventListener('touchstart', function(event){
-        let rowColElement = event.target.dataset['cord'];
-        let rowColValue;
-        if(rowColElement !== undefined) {
-            rowColValue = rowColElement.split('-');
-            document.querySelector('#rownum').innerText = rowColValue[1];
-            document.querySelector('#colnum').innerText = rowColValue[2];
-        }
-        if(true) {
-            // Eraser Logic
-            event.target.style.backgroundColor = context.isEraserEnabled?context.eraserColor : context.activeColor;
-
-            // Cell Track
-            context.userTrack(rowColValue[1], rowColValue[2], context.cellCount,event.target.style.backgroundColor);
-            context.cellCount++;
-        }
-    },false)
-
-    this.rootElement.addEventListener('touchmove', function(event){
-        let rowColElement = event.target.dataset['cord'];
-        let rowColValue;
-        if(rowColElement !== undefined) {
-            rowColValue = rowColElement.split('-');
-            document.querySelector('#rownum').innerText = rowColValue[1];
-            document.querySelector('#colnum').innerText = rowColValue[2];
-        }
-        if(true) {
-            // Eraser Logic
-            event.target.style.backgroundColor = context.isEraserEnabled?context.eraserColor : context.activeColor;
-
-            // Cell Track
-            context.userTrack(rowColValue[1], rowColValue[2], context.cellCount,event.target.style.backgroundColor);
-            context.cellCount++;
-        }
-    },false)
 
     this.rootElement.addEventListener('mouseup', function(event){
         isMouseClick = false;
     });
 
 
+    
+}
+
+Pixelart.prototype.mobileDrag = function(){
+    try {
+        this.rootElement.addEventListener('touchmove', function(event){
+            let touchElement = document.elementFromPoint(event.targetTouches[0].clientX, event.targetTouches[0].clientY)
+            let rowColElement = touchElement.dataset['cord']
+            let rowColValue;
+            if(rowColElement !== undefined) {
+                rowColValue = rowColElement.split('-');
+                document.querySelector('#rownum').innerText = rowColValue[1];
+                document.querySelector('#colnum').innerText = rowColValue[2];
+    
+                // Eraser Logic
+                touchElement.style.backgroundColor = this.isEraserEnabled?this.eraserColor : this.activeColor;
+    
+                // Cell Track
+                this.userTrack(rowColValue[1], rowColValue[2], this.cellCount,touchElement.style.backgroundColor);
+                this.cellCount++;
+            }
+            
+            
+        }.bind(this))
+    } catch (error) {
+        
+    }
     
 }
 
