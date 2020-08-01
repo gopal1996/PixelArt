@@ -75,6 +75,42 @@ Pixelart.prototype.bindEvent = function() {
         
     });
 
+    this.rootElement.addEventListener('touchstart', function(event){
+        let rowColElement = event.target.dataset['cord'];
+        let rowColValue;
+        if(rowColElement !== undefined) {
+            rowColValue = rowColElement.split('-');
+            document.querySelector('#rownum').innerText = rowColValue[1];
+            document.querySelector('#colnum').innerText = rowColValue[2];
+        }
+        if(true) {
+            // Eraser Logic
+            event.target.style.backgroundColor = context.isEraserEnabled?context.eraserColor : context.activeColor;
+
+            // Cell Track
+            context.userTrack(rowColValue[1], rowColValue[2], context.cellCount,event.target.style.backgroundColor);
+            context.cellCount++;
+        }
+    },false)
+
+    this.rootElement.addEventListener('touchmove', function(event){
+        let rowColElement = event.target.dataset['cord'];
+        let rowColValue;
+        if(rowColElement !== undefined) {
+            rowColValue = rowColElement.split('-');
+            document.querySelector('#rownum').innerText = rowColValue[1];
+            document.querySelector('#colnum').innerText = rowColValue[2];
+        }
+        if(true) {
+            // Eraser Logic
+            event.target.style.backgroundColor = context.isEraserEnabled?context.eraserColor : context.activeColor;
+
+            // Cell Track
+            context.userTrack(rowColValue[1], rowColValue[2], context.cellCount,event.target.style.backgroundColor);
+            context.cellCount++;
+        }
+    },false)
+
     this.rootElement.addEventListener('mouseup', function(event){
         isMouseClick = false;
     });
@@ -174,6 +210,7 @@ Pixelart.prototype.leftBar = function() {
     let context = this;
     leftbar.addEventListener('click', function(event){
         let menuItem = event.target.dataset['menu'];
+        console.log(menuItem)
         switch(menuItem) {
             case 'eraser':
                 document.querySelector('.active').classList.remove('active');
@@ -258,7 +295,7 @@ Pixelart.prototype.leftBar = function() {
                 break;
             default:
                 context.printTrack();
-                context.animate();
+                // context.animate();
         }
     })
 }
@@ -281,13 +318,12 @@ Pixelart.prototype.userTrack = function(row, col, id, backgroundColor) {
         col: col,
         backgroundColor: backgroundColor
     }
-    console.log(newData)
     this.cellTrack.push(newData);
 }
 
 Pixelart.prototype.printTrack = function(){
-    console.log(this.cellTrack)
-    console.log(this.cellCount)
+    // console.log(this.cellTrack)
+    // console.log(this.cellCount)
 }
 
 Pixelart.prototype.undoMenu = function(){
