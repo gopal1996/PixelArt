@@ -12,6 +12,9 @@ function Pixelart(element, row, col) {
     this.init();
     this.bindEvent();
     this.leftBar();
+    this.bindRightMenu();
+    this.bindcolorPicker();
+    this.bindGridWidth();
 }
 
 Pixelart.prototype.init = function() {
@@ -41,18 +44,18 @@ Pixelart.prototype.bindEvent = function() {
         context.cellTrack.length = context.cellCount;
         if(event.target.dataset['cord']) {
             // Eyedropper Logic
-            context.iseyeDropperEnabled && (context.activeColor = event.target.style.backgroundColor)
-            context.iseyeDropperEnabled &&(document.querySelector('#colorpicker').value = rgb2hex(event.target.style.backgroundColor)) 
-            context.iseyeDropperEnabled &&(document.querySelector('#colorpicker').style.backgroundColor = event.target.style.backgroundColor) 
-            context.iseyeDropperEnabled && (context.iseyeDropperEnabled = false);
+            context.iseyeDropperEnabled && context.eyedropper(event.target.style.backgroundColor)
+            
             // Eraser logic
-            event.target.style.backgroundColor = context.isEraserEnabled?context.eraserColor :context.activeColor;
+            event.target.style.backgroundColor = context.isEraserEnabled?context.eraserColor : context.activeColor;
+
             // cell Track
             let rowColValue = event.target.dataset['cord'].split('-');
-            context.userTrack(rowColValue[1], rowColValue[2],context.cellCount);
+            context.userTrack(rowColValue[1], rowColValue[2],context.cellCount,event.target.style.backgroundColor);
             context.cellCount++;
         }
     });
+
     this.rootElement.addEventListener('mouseover', function(event){
         let rowColElement = event.target.dataset['cord'];
         let rowColValue;
@@ -62,64 +65,108 @@ Pixelart.prototype.bindEvent = function() {
             document.querySelector('#colnum').innerText = rowColValue[2];
         }
         if(isMouseClick) {
-            event.target.style.backgroundColor = context.isEraserEnabled?context.eraserColor :context.activeColor
-            context.userTrack(rowColValue[1], rowColValue[2], context.cellCount);
+            // Eraser Logic
+            event.target.style.backgroundColor = context.isEraserEnabled?context.eraserColor : context.activeColor;
+
+            // Cell Track
+            context.userTrack(rowColValue[1], rowColValue[2], context.cellCount,event.target.style.backgroundColor);
             context.cellCount++;
         }
         
     });
+
     this.rootElement.addEventListener('mouseup', function(event){
         isMouseClick = false;
     });
 
+
+    
+}
+
+Pixelart.prototype.bindcolorPicker = function(){
+    document.querySelector('#colorpicker').addEventListener('input', function(event){
+        this.activeColor = event.target.value;
+        event.target.style.backgroundColor = event.target.value;
+    }.bind(this))
+}
+
+Pixelart.prototype.bindGridWidth = function(){
+    document.querySelector('#widthrange').addEventListener('input', function(event) {
+        this.rootElement.style.width = `${event.target.value}%`;
+        this.rootElement.style.height = `${event.target.value}%`;
+    }.bind(this))
+}
+
+
+Pixelart.prototype.bindRightMenu = function(){
+    
+    // right menu
     document.querySelector('.rightbar').addEventListener('click', function(event){
         if(event.target.dataset['resize']) {
-            context.row = Number(document.querySelector('#height').value);
-            context.col = Number(document.querySelector('#width').value);
-            context.cellTrack = [];
-            context.cellCount = 0;
-            context.init()
+           this.resizeGrid();
         }
 
         if(event.target.dataset['themecolor']) {
-            document.querySelector('.leftbar').style.backgroundColor = event.target.style.backgroundColor;
-            document.querySelector('.rightbar--draw-button').style.backgroundColor = event.target.style.backgroundColor;
-            document.querySelectorAll('.btn-custom').forEach(element => element.style.backgroundColor = event.target.style.backgroundColor);
+            this.setTheme(event.target.style.backgroundColor);
         }
 
         if(event.target.dataset['cellcolor']) {
-            context.activeColor = event.target.dataset['cellcolor'];
-            document.querySelectorAll('#colorpicker').forEach(element => {
-                element.value = context.activeColor;
-                element.style.backgroundColor = context.activeColor;
-            })
+            this.setActiveColor(event.target.dataset['cellcolor'])
         }
 
         if(event.target.dataset['customcolor']){
             console.log(event.target.value);
         }
 
-        if(event.target.dataset['frame']==='circle') {
-            document.querySelector('.rightbar--frames__circle').style.backgroundColor = '#000';
-            document.querySelector('.rightbar--frames__box').style.backgroundColor = '#fff';
-            document.querySelectorAll('.cell').forEach(value => value.classList.add('cell-rounded'))
-        }
-        if(event.target.dataset['frame']==='box') {
-            document.querySelector('.rightbar--frames__box').style.backgroundColor = '#000';
-            document.querySelector('.rightbar--frames__circle').style.backgroundColor = '#fff';
-            document.querySelectorAll('.cell').forEach(value => value.classList.remove('cell-rounded'))
-        }
-    })
+        // set Frame
+        event.target.dataset['frame'] && this.setFrame(event.target.dataset['frame']);
+    }.bind(this))
+}
 
-    document.querySelector('#colorpicker').addEventListener('input', function(event){
-        context.activeColor = event.target.value;
-        event.target.style.backgroundColor = event.target.value;
-    })
+// set Frame
+Pixelart.prototype.setFrame = function(frame){
+    let circleFrame = document.querySelector('.rightbar--frames__circle');
+    let boxFrame = document.querySelector('.rightbar--frames__box');
+    if(frame === 'circle') {
+        circleFrame.style.backgroundColor = '#000';
+        boxFrame.style.backgroundColor = '#fff';
+        document.querySelectorAll('.cell').forEach(value => value.classList.add('cell-rounded'))
+    } else {
+        boxFrame.style.backgroundColor = '#000';
+        circleFrame.style.backgroundColor = '#fff';
+        document.querySelectorAll('.cell').forEach(value => value.classList.remove('cell-rounded'))
+    }
+}
 
-    document.querySelector('#widthrange').addEventListener('input', function(event) {
-        context.rootElement.style.width = `${event.target.value}%`;
-        context.rootElement.style.height = `${event.target.value}%`;
+// Set active color
+Pixelart.prototype.setActiveColor = function(color){
+    this.activeColor = color;
+    document.querySelectorAll('#colorpicker').forEach(element => {
+        element.value = this.activeColor;
+        element.style.backgroundColor = this.activeColor;
     })
+}
+
+// set Theme
+Pixelart.prototype.setTheme = function(backgroundColor){
+    document.querySelector('.leftbar').style.backgroundColor = backgroundColor;
+    document.querySelector('.rightbar--draw-button').style.backgroundColor = backgroundColor;
+    document.querySelectorAll('.btn-custom').forEach(element => element.style.backgroundColor = backgroundColor);
+}
+
+// Resize Logic
+Pixelart.prototype.resizeGrid = function(){
+    this.row = Number(document.querySelector('#height').value);
+    this.col = Number(document.querySelector('#width').value);
+    this.cellTrack = [];
+    this.cellCount = 0;
+    this.init()
+}
+
+// Eye Dropper Logic
+Pixelart.prototype.eyedropper = function(backgroundColor) {
+    this.setActiveColor(rgb2hex(backgroundColor))
+    this.iseyeDropperEnabled = false
 }
 
 Pixelart.prototype.leftBar = function() {
@@ -129,36 +176,85 @@ Pixelart.prototype.leftBar = function() {
         let menuItem = event.target.dataset['menu'];
         switch(menuItem) {
             case 'eraser':
+                document.querySelector('.active').classList.remove('active');
                 context.isEraserEnabled = true;
                 document.body.style.cursor = "url('./eraser.png'), default";
+                document.querySelector('.leftbar--eraser').classList.add('active');
                 break;
             case 'edit':
+                document.querySelector('.active').classList.remove('active');
                 context.isEraserEnabled = false;
                 document.body.style.cursor = "url('./pencil.png'), default";
+                document.querySelector('.leftbar--edit').classList.add('active');
                 break;
             case 'togglegrid':
+                document.querySelector('.active').classList.remove('active');
                 if(context.rootElement.classList.contains('mainboard-outline')) {
                     context.rootElement.classList.remove('mainboard-outline');
                 } else {
                     context.rootElement.classList.add('mainboard-outline');
                 }
+                document.querySelector('.leftbar--togglegrid').classList.add('active');
+                setTimeout(function(){
+                    document.querySelector('.leftbar--togglegrid').classList.remove('active');
+                    document.querySelector('.leftbar--edit').classList.add('active');
+                    context.isEraserEnabled = false;
+                    document.body.style.cursor = "url('./pencil.png'), default";
+                },800)
+                
                 break;
             case 'clear':
+                document.querySelector('.active').classList.remove('active');
                 document.querySelectorAll('div[data-cord]').forEach(value => value.style.backgroundColor='');
                 context.cellTrack = [];
                 context.cellCount = 0;
+                
+                document.querySelector('.leftbar--clear').classList.add('active');
+                setTimeout(function(){
+                    document.querySelector('.leftbar--clear').classList.remove('active');
+                    document.querySelector('.leftbar--edit').classList.add('active');
+                    context.isEraserEnabled = false;
+                    document.body.style.cursor = "url('./pencil.png'), default";
+                },800)
+                
                 break;
             case 'download':
+                document.querySelector('.active').classList.remove('active');
                 context.downloadGrid();
+                document.querySelector('.leftbar--download').classList.add('active');
+                setTimeout(function(){
+                    document.querySelector('.leftbar--download').classList.remove('active');
+                    context.isEraserEnabled = false;
+                    document.querySelector('.leftbar--edit').classList.add('active');
+                    document.body.style.cursor = "url('./pencil.png'), default";
+                },500)
                 break;
             case 'undo':
-                context.undo();
+                document.querySelector('.active').classList.remove('active');
+                context.undoMenu();
+                document.querySelector('.leftbar--undo').classList.add('active');
+                setTimeout(function(){
+                    document.querySelector('.leftbar--undo').classList.remove('active');
+                    context.isEraserEnabled = false;
+                    document.querySelector('.leftbar--edit').classList.add('active');
+                    document.body.style.cursor = "url('./pencil.png'), default";
+                },500)
                 break;
             case 'redo':
-                context.redo();
+                document.querySelector('.active').classList.remove('active');
+                context.redoMenu();
+                document.querySelector('.leftbar--redo').classList.add('active');
+                setTimeout(function(){
+                    document.querySelector('.leftbar--redo').classList.remove('active');
+                    context.isEraserEnabled = false;
+                    document.querySelector('.leftbar--edit').classList.add('active');
+                    document.body.style.cursor = "url('./pencil.png'), default";
+                },500)
                 break;
             case 'eyedropper':
-                context.eyeDropper();
+                document.querySelector('.active').classList.remove('active');
+                context.eyeDropperMenu();
+                document.querySelector('.leftbar--eyedropper').classList.add('active');
                 break;
             default:
                 context.printTrack();
@@ -173,16 +269,17 @@ Pixelart.prototype.downloadGrid = function() {
     });
 }
 
-Pixelart.prototype.eyeDropper = function() {
+Pixelart.prototype.eyeDropperMenu = function() {
    this.iseyeDropperEnabled = true;
 }
 
 
-Pixelart.prototype.userTrack = function(row, col, id) {
+Pixelart.prototype.userTrack = function(row, col, id, backgroundColor) {
     let newData = {
         id: id,
         row: row,
-        col: col
+        col: col,
+        backgroundColor: backgroundColor
     }
     console.log(newData)
     this.cellTrack.push(newData);
@@ -193,7 +290,7 @@ Pixelart.prototype.printTrack = function(){
     console.log(this.cellCount)
 }
 
-Pixelart.prototype.undo = function(){
+Pixelart.prototype.undoMenu = function(){
     if(this.cellCount >= 1){
         this.cellCount--;
         this.cellTrack.forEach(value => {
@@ -204,11 +301,11 @@ Pixelart.prototype.undo = function(){
     }
 }
 
-Pixelart.prototype.redo = function(){
+Pixelart.prototype.redoMenu = function(){
     if(this.cellTrack.length > this.cellCount) {
         this.cellTrack.forEach(value => {
             if(value.id === this.cellCount) {
-                document.querySelector(`[data-cord='col-${value.row}-${value.col}']`).style.backgroundColor = this.activeColor;
+                document.querySelector(`[data-cord='col-${value.row}-${value.col}']`).style.backgroundColor = value.backgroundColor;
             }
         })
         this.cellCount++;
@@ -229,7 +326,7 @@ Pixelart.prototype.animate = function(){
 
 
 // Initilaize Pixelart
-new Pixelart('.mainboard', 3, 3);
+new Pixelart('.mainboard', 20, 20);
 
 // Convert rgb to hex
 var hexDigits = new Array

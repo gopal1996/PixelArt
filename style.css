@@ -63,6 +63,10 @@ body {
     justify-content: space-evenly;
 }
 
+.active {
+    color: #ffff00;
+}
+
 .rightbar--gridsize__height {
     display: flex;
     flex-direction: column;
