@@ -482,6 +482,7 @@ button:focus {
 
     .mainboard-container {
         padding: 0;
+        margin: 0;
     }
 
     .rightbar, .gamebar {
