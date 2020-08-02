@@ -1,60 +1,43 @@
 function Pixelart(element, row, col) {
-    this.activeColor = '#000';
-    this.eraserColor = '#fff';
-    this.highScore = 0;
-    this.isEraserEnabled = false;
-    this.isMouseClick = false;
-    this.isGameMenuEnabled = false;
-    this.isEditModeEnabled = true;
+    // Initialize variable
     this.rootElement = document.querySelector(element);
     this.row = row;
     this.col = col;
-    this.score = 0;
+    this.activeColor = '#000';
+    this.eraserColor = '#fff';
     this.cellTrack = [];
-    this.getHighScore();
+    this.cellCount = 1;
+    this.score = 0;
+    this.highScore = 0;
+
+    // Bind Events
     this.boundMouseUpListener = mouseUpListener.bind(this)
     this.boundMouseOverListener = mouseOverListener.bind(this)
     this.boundMouseDownListener = mouseDownListener.bind(this)
     this.boundGameMouseDownListener = gameMouseDown.bind(this)
     this.boundTouchEventListener = touchEvent.bind(this);
-    this.cellCount = 1;
-    this.iseyeDropperEnabled = false;
 
+    // flag mode    
+    this.isEraserEnabled = false;
+    this.isMouseClick = false;
+    this.isGameMenuEnabled = false;
+    this.isEditModeEnabled = true;
+    this.iseyeDropperEnabled = false;
+    
+    // get highscore
+    this.getHighScore();
+
+    // pixelart default mode
     this.editMode();
+
+    // bind events for menu
     this.leftBar();
     this.bindRightMenu();
     this.bindcolorPicker();
     this.bindGridWidth();
 }
 
-Pixelart.prototype.init = function() {
-    document.querySelector('#height').value = Number(this.row);
-    document.querySelector('#width').value = Number(this.col);
-    let { color, oddColor } = this.generateRandomColor();
-    this.rootElement.innerHTML = '';
-    let fragmentElement = document.createDocumentFragment();
-    for(let i=0;i<this.row;i++) {
-        let rowElement = document.createElement('div');
-        rowElement.classList.add('row');
-        for(let j=0;j<this.col;j++) {
-            let colElement = document.createElement('div');
-            colElement.classList.add('cell');
-            // Game logic
-            if(this.isGameMenuEnabled){
-                colElement.dataset['gamecell'] = "wrong";
-                colElement.style.backgroundColor = color;
-            }
-
-            colElement.dataset['cord']=`col-${i}-${j}`;
-            rowElement.appendChild(colElement);
-        }
-        fragmentElement.appendChild(rowElement)
-    }
-    this.rootElement.appendChild(fragmentElement)
-    this.isGameMenuEnabled && this.addOddColorCell(oddColor);
-}
-
-
+// Event Listener
 function mouseDownListener(event){
     this.isMouseClick = true;
     this.cellTrack.length = this.cellCount;
@@ -96,21 +79,6 @@ function mouseUpListener(event){
     this.isMouseClick = false;
 }
 
-Pixelart.prototype.bindEvent = function() {
-    this.rootElement.addEventListener('mousedown', this.boundMouseDownListener);
-    this.rootElement.addEventListener('mouseover', this.boundMouseOverListener);
-    this.rootElement.addEventListener('mouseup', this.boundMouseUpListener);
-    
-}
-
-// Remove Bind Event
-
-Pixelart.prototype.removeBindEvent = function() {
-    this.rootElement.removeEventListener('mousedown', this.boundMouseDownListener);
-    this.rootElement.removeEventListener('mouseover', this.boundMouseOverListener);
-    this.rootElement.removeEventListener('mouseup', this.boundMouseUpListener); 
-}
-
 function gameMouseDown(event){
     let target = event.target.dataset['gamecell'];
     if(target === 'correct'){
@@ -136,49 +104,31 @@ function gameMouseDown(event){
     }
 }
 
-Pixelart.prototype.setHighScore = function() {
-    if(this.score >= this.highScore){
-        this.highScore = this.score;
-    }
-    window.localStorage.setItem('highscore', this.highScore)
-}
-
-Pixelart.prototype.getHighScore = function() {
-    let high = window.localStorage.getItem('highscore');
-    document.querySelector('.highscorecount').innerText = high;
-}
-
-Pixelart.prototype.addBindGameEvent = function() {
-    this.rootElement.addEventListener('mousedown', this.boundGameMouseDownListener)
-}
-
-Pixelart.prototype.removeBindGameEvent = function() {
-    this.rootElement.removeEventListener('mousedown', this.boundGameMouseDownListener)
-}
-
-Pixelart.prototype.setScore = function(){
-    document.querySelector('.score').innerHTML = this.score;
-}
-
-Pixelart.prototype.resetGrid = function(){
+Pixelart.prototype.init = function() {
+    document.querySelector('#height').value = Number(this.row);
+    document.querySelector('#width').value = Number(this.col);
+    let { color, oddColor } = this.generateRandomColor();
     this.rootElement.innerHTML = '';
-}
+    let fragmentElement = document.createDocumentFragment();
+    for(let i=0;i<this.row;i++) {
+        let rowElement = document.createElement('div');
+        rowElement.classList.add('row');
+        for(let j=0;j<this.col;j++) {
+            let colElement = document.createElement('div');
+            colElement.classList.add('cell');
+            // Game logic
+            if(this.isGameMenuEnabled){
+                colElement.dataset['gamecell'] = "wrong";
+                colElement.style.backgroundColor = color;
+            }
 
-Pixelart.prototype.getRandomCell = function() {
-    
-    let row = Math.floor(Math.random() * Number(this.row));
-    let col = Math.floor(Math.random() * Number(this.col));
-    
-	return {row, col};
-}
-
-Pixelart.prototype.addOddColorCell = function(oddColor) {
-    
-    let {row, col} = this.getRandomCell();
-    console.log(row, col)
-    let uniqueCell = document.querySelector(`div[data-cord='col-${row}-${col}']`);
-    uniqueCell.dataset['gamecell']="correct";
-    uniqueCell.style.backgroundColor = oddColor;
+            colElement.dataset['cord']=`col-${i}-${j}`;
+            rowElement.appendChild(colElement);
+        }
+        fragmentElement.appendChild(rowElement)
+    }
+    this.rootElement.appendChild(fragmentElement)
+    this.isGameMenuEnabled && this.addOddColorCell(oddColor);
 }
 
 function touchEvent(event) {
@@ -200,6 +150,19 @@ function touchEvent(event) {
     }
 }
 
+// Pixelart
+// bind events
+Pixelart.prototype.bindEvent = function() {
+    this.rootElement.addEventListener('mousedown', this.boundMouseDownListener);
+    this.rootElement.addEventListener('mouseover', this.boundMouseOverListener);
+    this.rootElement.addEventListener('mouseup', this.boundMouseUpListener);
+}
+
+Pixelart.prototype.removeBindEvent = function() {
+    this.rootElement.removeEventListener('mousedown', this.boundMouseDownListener);
+    this.rootElement.removeEventListener('mouseover', this.boundMouseOverListener);
+    this.rootElement.removeEventListener('mouseup', this.boundMouseUpListener); 
+}
 
 Pixelart.prototype.mobileDrag = function(){
     try {
@@ -246,11 +209,6 @@ Pixelart.prototype.bindRightMenu = function(){
         if(event.target.dataset['cellcolor']) {
             this.setActiveColor(event.target.dataset['cellcolor'])
         }
-
-        // if(event.target.dataset['customcolor']){
-        //     console.log(event.target.value)
-        //     this.setActiveColor(event.target.value);
-        // }
 
         // set Frame
         event.target.dataset['frame'] && this.setFrame(event.target.dataset['frame']);
@@ -306,12 +264,66 @@ Pixelart.prototype.eyedropper = function(backgroundColor) {
     document.querySelector('.leftbar--edit').classList.add('active');
 }
 
+Pixelart.prototype.downloadGrid = function() {
+    html2canvas(this.rootElement).then(canvas => {
+        canvas.toBlob(function(blob){ saveAs(blob,"pixelart.png"); });
+    });
+}
+
+Pixelart.prototype.eyeDropperMenu = function() {
+   this.iseyeDropperEnabled = true;
+}
+
+
+Pixelart.prototype.userTrack = function(row, col, id, backgroundColor) {
+    let newData = {
+        id: id,
+        row: row,
+        col: col,
+        backgroundColor: backgroundColor
+    }
+    this.cellTrack.push(newData);
+}
+
+Pixelart.prototype.undoMenu = function(){
+    if(this.cellCount >= 1){
+        this.cellCount--;
+        this.cellTrack.forEach(value => {
+            if(value.id === this.cellCount) {
+                document.querySelector(`[data-cord='col-${value.row}-${value.col}']`).style.backgroundColor = "";
+            }
+        })
+        console.log(this.cellTrack)
+    }
+}
+
+Pixelart.prototype.redoMenu = function(){
+    if(this.cellTrack.length > this.cellCount) {
+        this.cellTrack.forEach(value => {
+            if(value.id === this.cellCount) {
+                document.querySelector(`[data-cord='col-${value.row}-${value.col}']`).style.backgroundColor = value.backgroundColor;
+            }
+        })
+        this.cellCount++;
+    }
+}
+
+Pixelart.prototype.editMode = function(){
+    document.querySelectorAll('.title').forEach(value => value.innerText = "Pixel Art");
+    document.querySelector('.rightbar').style.display = "flex";
+    document.querySelector('.gamebar').style.display = "none";
+    this.init();
+    this.bindEvent();
+    this.mobileDrag();
+    this.removeBindGameEvent();
+}
+
+// leftbar menu
 Pixelart.prototype.leftBar = function() {
     let leftbar = document.querySelector('.leftbar');
     let context = this;
     leftbar.addEventListener('click', function(event){
         let menuItem = event.target.dataset['menu'];
-        console.log(menuItem)
         switch(menuItem) {
             case 'eraser':
                 if(!context.isGameMenuEnabled) {
@@ -445,62 +457,16 @@ Pixelart.prototype.leftBar = function() {
     })
 }
 
-Pixelart.prototype.downloadGrid = function() {
-    html2canvas(this.rootElement).then(canvas => {
-        canvas.toBlob(function(blob){ saveAs(blob,"pixelart.png"); });
-    });
+
+// Color Spotter Game
+// Bind Event
+Pixelart.prototype.addBindGameEvent = function() {
+    this.rootElement.addEventListener('mousedown', this.boundGameMouseDownListener)
 }
 
-Pixelart.prototype.eyeDropperMenu = function() {
-   this.iseyeDropperEnabled = true;
+Pixelart.prototype.removeBindGameEvent = function() {
+    this.rootElement.removeEventListener('mousedown', this.boundGameMouseDownListener)
 }
-
-
-Pixelart.prototype.userTrack = function(row, col, id, backgroundColor) {
-    let newData = {
-        id: id,
-        row: row,
-        col: col,
-        backgroundColor: backgroundColor
-    }
-    this.cellTrack.push(newData);
-}
-
-Pixelart.prototype.undoMenu = function(){
-    if(this.cellCount >= 1){
-        this.cellCount--;
-        this.cellTrack.forEach(value => {
-            if(value.id === this.cellCount) {
-                document.querySelector(`[data-cord='col-${value.row}-${value.col}']`).style.backgroundColor = "";
-            }
-        })
-        console.log(this.cellTrack)
-    }
-}
-
-Pixelart.prototype.redoMenu = function(){
-    if(this.cellTrack.length > this.cellCount) {
-        this.cellTrack.forEach(value => {
-            if(value.id === this.cellCount) {
-                document.querySelector(`[data-cord='col-${value.row}-${value.col}']`).style.backgroundColor = value.backgroundColor;
-            }
-        })
-        this.cellCount++;
-    }
-}
-
-Pixelart.prototype.editMode = function(){
-    document.querySelectorAll('.title').forEach(value => value.innerText = "Pixel Art");
-    document.querySelector('.rightbar').style.display = "flex";
-    document.querySelector('.gamebar').style.display = "none";
-    this.init();
-    this.bindEvent();
-    this.mobileDrag();
-    this.removeBindGameEvent();
-}
-
-
-// Fun Game
 
 Pixelart.prototype.gameMode = function(){
     document.querySelectorAll('.title').forEach(value => value.innerText = "Color Spotter Game");
@@ -528,13 +494,42 @@ Pixelart.prototype.generateRandomColor = function() {
     }
 }
 
+Pixelart.prototype.setHighScore = function() {
+    if(this.score >= this.highScore){
+        this.highScore = this.score;
+    }
+    window.localStorage.setItem('highscore', this.highScore)
+}
+
+Pixelart.prototype.getHighScore = function() {
+    let high = window.localStorage.getItem('highscore');
+    document.querySelector('.highscorecount').innerText = high;
+}
+
+Pixelart.prototype.setScore = function(){
+    document.querySelector('.score').innerHTML = this.score;
+}
+
+Pixelart.prototype.resetGrid = function(){
+    this.rootElement.innerHTML = '';
+}
+
+Pixelart.prototype.getRandomCell = function() {
+    let row = Math.floor(Math.random() * Number(this.row));
+    let col = Math.floor(Math.random() * Number(this.col));
+	return {row, col};
+}
+
+Pixelart.prototype.addOddColorCell = function(oddColor) {
+    let {row, col} = this.getRandomCell();
+    console.log(row, col)
+    let uniqueCell = document.querySelector(`div[data-cord='col-${row}-${col}']`);
+    uniqueCell.dataset['gamecell']="correct";
+    uniqueCell.style.backgroundColor = oddColor;
+}
 
 
-
-
-// Initilaize Pixelart
-var startApp = new Pixelart('.mainboard', 20, 20);
-
+// Helper function
 // Convert rgb to hex
 var hexDigits = new Array
         ("0","1","2","3","4","5","6","7","8","9","a","b","c","d","e","f"); 
@@ -547,7 +542,6 @@ function rgb2hex(rgb) {
     }catch(error){
         
     }
-    
 }
 
 function hex(x) {
@@ -555,16 +549,17 @@ function hex(x) {
 }
 
 // Disable F12 shortcut key
+// document.onkeydown = function (event){
+//      event = (event || window.event);
+//      if (event.keyCode == 123)
+//      {
+//          alert("function disabled")
+//         return false;
+//      } else if(event.ctrlKey && event.shiftKey && event.keyCode==73) {
+//         alert("function disabled")
+//         return false;
+//      }
+// }
 
-document.onkeydown = function (event)
-{
-     event = (event || window.event);
-     if (event.keyCode == 123)
-     {
-         alert("function disabled")
-        return false;
-     } else if(event.ctrlKey && event.shiftKey && event.keyCode==73) {
-        alert("function disabled")
-        return false;
-     }
-}
+// Initilaize Pixelart
+var startApp = new Pixelart('.mainboard', 20, 20);
