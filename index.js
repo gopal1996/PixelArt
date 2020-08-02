@@ -148,17 +148,15 @@ Pixelart.prototype.resetGrid = function(){
 }
 
 Pixelart.prototype.getRandomCell = function() {
-    console.log(this.row)
-    let row = Math.floor(Math.random() * Number(this.row));
-    let col = Math.floor(Math.random() * Number(this.col));
-    console.log(col)
-	return {
-        row, col
-    }
+    
+    // let row = Math.floor(Math.random() * Number(this.row));
+    // let col = Math.floor(Math.random() * Number(this.col));
+    // console.log(col)
+	// return row;
 }
 
 Pixelart.prototype.addOddColorCell = function(oddColor) {
-    
+    console.log(this)
     let row = this.getRandomCell();
     // console.log(row);
     // console.log(this.getRandomCell())
