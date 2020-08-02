@@ -78,15 +78,16 @@ function mouseOverListener(event){
         rowColValue = rowColElement.split('-');
         document.querySelector('#rownum').innerText = rowColValue[1];
         document.querySelector('#colnum').innerText = rowColValue[2];
+        if(this.isMouseClick) {
+            // Eraser Logic
+            event.target.style.backgroundColor = this.isEraserEnabled?this.eraserColor : this.activeColor;
+    
+            // Cell Track
+            this.userTrack(rowColValue[1], rowColValue[2], this.cellCount,event.target.style.backgroundColor);
+            this.cellCount++;
+        }
     }
-    if(this.isMouseClick) {
-        // Eraser Logic
-        event.target.style.backgroundColor = this.isEraserEnabled?this.eraserColor : this.activeColor;
-
-        // Cell Track
-        this.userTrack(rowColValue[1], rowColValue[2], this.cellCount,event.target.style.backgroundColor);
-        this.cellCount++;
-    }
+    
 }
 
 function mouseUpListener(event){
