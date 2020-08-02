@@ -549,12 +549,15 @@ function hex(x) {
 
 // Disable F12 shortcut key
 
-// document.onkeydown = function (event)
-// {
-//      event = (event || window.event);
-//      if (event.keyCode == 123 || event.keyCode == 18)
-//      {
-//            alert("Developer Tool is not allowed here");
-//            return false;
-//      }
-// }
+document.onkeydown = function (event)
+{
+     event = (event || window.event);
+     if (event.keyCode == 123)
+     {
+         alert("function disabled")
+        return false;
+     } else if(event.ctrlKey && event.shiftKey && event.keyCode==73) {
+        alert("function disabled")
+        return false;
+     }
+}
