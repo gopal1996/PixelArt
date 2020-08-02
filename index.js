@@ -432,8 +432,7 @@ Pixelart.prototype.leftBar = function() {
                 document.querySelector('.leftbar--logo').classList.add('active');
                 break;
             default:
-                context.printTrack();
-                // context.animate();
+                
         }
     })
 }
@@ -457,11 +456,6 @@ Pixelart.prototype.userTrack = function(row, col, id, backgroundColor) {
         backgroundColor: backgroundColor
     }
     this.cellTrack.push(newData);
-}
-
-Pixelart.prototype.printTrack = function(){
-    // console.log(this.cellTrack)
-    // console.log(this.cellCount)
 }
 
 Pixelart.prototype.undoMenu = function(){
