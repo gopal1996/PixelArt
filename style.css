@@ -146,10 +146,10 @@ span {
 
 .mainboard-container {
     display: flex;
-    /* margin: 10px; */
+    margin: 10px;
     /* border: 1px solid #ccc; */
-    /* border-radius: 5px; */
-    /* padding: 2px; */
+    border-radius: 5px;
+    padding: 2px;
     background-color: #fff;
     flex-direction: column;
     justify-content: center;
