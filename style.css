@@ -155,7 +155,7 @@ span {
     justify-content: center;
     align-items: center;
     width: 100%;
-    height: 100%;
+    height: 96%;
 }
 
 .cell {
@@ -483,6 +483,7 @@ button:focus {
     .mainboard-container {
         padding: 0;
         margin: 0;
+        height: 100%;
     }
 
     .rightbar, .gamebar {
