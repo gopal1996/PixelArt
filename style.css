@@ -25,6 +25,11 @@ body {
     font-size: 2rem;
 }
 
+.title {
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
 #widthrange {
     width: 100%;
 }
@@ -32,7 +37,10 @@ body {
 .leftbar {
     background: #2f2f2f;
     display: flex;
+    width: 12%;
     flex-direction: column;
+    align-items: center;
+    justify-content: center;
     cursor: default;
     color: #fff;
 }
@@ -52,9 +60,12 @@ body {
     display: flex;
     flex-direction: column;
     margin-left: 1.2rem;
-    margin-right: 1.2rem;
+    /* margin-right: 1.2rem; */
+    padding: 0 1rem 0 1rem;
+    box-shadow: -5px 7px 12px -3px rgba(0,0,0,0.75);
     flex-grow: 0;
     cursor: default;
+    width: 20%;
     flex-shrink: 0;
     justify-content: space-evenly;
 }
@@ -392,8 +403,11 @@ button:focus {
         padding: 0;
     }
 
+
     .rightbar,.gamebar {
         margin-bottom: .5rem;
+        flex-direction: row;
+        width: 100%;
     }
 
     .rightbar, .gamebar > * {
@@ -410,6 +424,7 @@ button:focus {
 
     .leftbar {
         align-items: center;
+        width: 100%;
     }
 
     .leftbar--gridcoord {
@@ -427,6 +442,10 @@ button:focus {
         justify-content: center;
     }
 
+    .title {
+        display: none;
+    }
+
     .rightbar--draw {
         display: flex;
         flex-direction: column;
@@ -439,11 +458,19 @@ button:focus {
         height: 15px;
     }
 
+    .mainboard-container {
+        padding: 0;
+    }
+
+    .rightbar, .gamebar {
+        margin-left: 0;
+        margin-right: 0;
+        padding: 0 0 1rem 0;
+        margin-bottom: 1rem;
+    }
+
     .leftbar {
         flex-direction: row;
     }
 
-    .rightbar, .gamebar {
-        flex-direction: row;
-    }
 }

@@ -301,6 +301,7 @@ Pixelart.prototype.resizeGrid = function(){
 Pixelart.prototype.eyedropper = function(backgroundColor) {
     this.setActiveColor(rgb2hex(backgroundColor))
     this.iseyeDropperEnabled = false;
+    document.body.style.cursor = "url('./pencil.png'), default";
     document.querySelector('.leftbar--eyedropper').classList.remove('active');
     document.querySelector('.leftbar--edit').classList.add('active');
 }
@@ -412,6 +413,7 @@ Pixelart.prototype.leftBar = function() {
                 break;
             case 'eyedropper':
                 if(!context.isGameMenuEnabled) {
+                    document.body.style.cursor = "crosshair";
                     context.isEraserEnabled = false;
                     document.querySelector('.active').classList.remove('active');
                     context.eyeDropperMenu();
@@ -470,6 +472,7 @@ Pixelart.prototype.undoMenu = function(){
                 document.querySelector(`[data-cord='col-${value.row}-${value.col}']`).style.backgroundColor = "";
             }
         })
+        console.log(this.cellTrack)
     }
 }
 
@@ -485,6 +488,7 @@ Pixelart.prototype.redoMenu = function(){
 }
 
 Pixelart.prototype.editMode = function(){
+    document.querySelectorAll('.title').forEach(value => value.innerText = "Pixel Art");
     document.querySelector('.rightbar').style.display = "flex";
     document.querySelector('.gamebar').style.display = "none";
     this.init();
@@ -497,6 +501,7 @@ Pixelart.prototype.editMode = function(){
 // Fun Game
 
 Pixelart.prototype.gameMode = function(){
+    document.querySelectorAll('.title').forEach(value => value.innerText = "Color Spotter Game");
     this.row = 4;
     this.col = 4;
     this.init();
