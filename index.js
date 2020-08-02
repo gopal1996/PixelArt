@@ -1,28 +1,30 @@
 function Pixelart(element, row, col) {
     this.activeColor = '#000';
     this.eraserColor = '#fff';
+    this.highScore = 0;
     this.isEraserEnabled = false;
     this.isMouseClick = false;
     this.isGameMenuEnabled = false;
+    this.isEditModeEnabled = true;
     this.rootElement = document.querySelector(element);
     this.row = row;
     this.col = col;
     this.score = 0;
     this.cellTrack = [];
+    this.getHighScore();
     this.boundMouseUpListener = mouseUpListener.bind(this)
     this.boundMouseOverListener = mouseOverListener.bind(this)
     this.boundMouseDownListener = mouseDownListener.bind(this)
     this.boundGameMouseDownListener = gameMouseDown.bind(this)
+    this.boundTouchEventListener = touchEvent.bind(this);
     this.cellCount = 1;
     this.iseyeDropperEnabled = false;
 
-    this.init();
-    this.bindEvent();
+    this.editMode();
     this.leftBar();
     this.bindRightMenu();
     this.bindcolorPicker();
     this.bindGridWidth();
-    this.mobileDrag();
 }
 
 Pixelart.prototype.init = function() {
@@ -54,7 +56,6 @@ Pixelart.prototype.init = function() {
 
 
 function mouseDownListener(event){
-    console.log(this)
     this.isMouseClick = true;
     this.cellTrack.length = this.cellCount;
     if(event.target.dataset['cord']) {
@@ -76,8 +77,9 @@ function mouseOverListener(event){
     let rowColValue;
     if(rowColElement !== undefined) {
         rowColValue = rowColElement.split('-');
-        document.querySelector('#rownum').innerText = rowColValue[1];
-        document.querySelector('#colnum').innerText = rowColValue[2];
+        document.querySelectorAll('#rownum').forEach(value => value.innerText = rowColValue[1])
+        document.querySelectorAll('#colnum').forEach(value => value.innerText = rowColValue[2])
+        
         if(this.isMouseClick) {
             // Eraser Logic
             event.target.style.backgroundColor = this.isEraserEnabled?this.eraserColor : this.activeColor;
@@ -122,6 +124,8 @@ function gameMouseDown(event){
         this.rootElement.classList.add('shake');
         setTimeout(function(){
             this.rootElement.classList.remove('shake');
+            this.setHighScore();
+            this.getHighScore();
             this.score = 0;
             this.col = 4;
             this.row = 4;
@@ -132,16 +136,28 @@ function gameMouseDown(event){
     }
 }
 
+Pixelart.prototype.setHighScore = function() {
+    if(this.score >= this.highScore){
+        this.highScore = this.score;
+    }
+    window.localStorage.setItem('highscore', this.highScore)
+}
+
+Pixelart.prototype.getHighScore = function() {
+    let high = window.localStorage.getItem('highscore');
+    document.querySelector('.highscorecount').innerText = high;
+}
+
 Pixelart.prototype.addBindGameEvent = function() {
     this.rootElement.addEventListener('mousedown', this.boundGameMouseDownListener)
 }
 
 Pixelart.prototype.removeBindGameEvent = function() {
-    this.rootElement.addEventListener('mousedown', this.boundGameMouseDownListener)
+    this.rootElement.removeEventListener('mousedown', this.boundGameMouseDownListener)
 }
 
 Pixelart.prototype.setScore = function(){
-    // document.querySelector('.score').innerHTML = this.score;
+    document.querySelector('.score').innerHTML = this.score;
 }
 
 Pixelart.prototype.resetGrid = function(){
@@ -150,48 +166,55 @@ Pixelart.prototype.resetGrid = function(){
 
 Pixelart.prototype.getRandomCell = function() {
     
-    // let row = Math.floor(Math.random() * Number(this.row));
-    // let col = Math.floor(Math.random() * Number(this.col));
-    // console.log(col)
-	// return row;
+    let row = Math.floor(Math.random() * Number(this.row));
+    let col = Math.floor(Math.random() * Number(this.col));
+    
+	return {row, col};
 }
 
 Pixelart.prototype.addOddColorCell = function(oddColor) {
-    console.log(this)
-    let row = this.getRandomCell();
-    // console.log(row);
-    // console.log(this.getRandomCell())
-    // let uniqueCell = document.querySelector(`div[data-cord='${row}-${col}']`);
-    // uniqueCell.dataset['gamecell']="correct";
-    // uniqueCell.style.backgroundColor = oddColor;
+    
+    let {row, col} = this.getRandomCell();
+    console.log(row, col)
+    let uniqueCell = document.querySelector(`div[data-cord='col-${row}-${col}']`);
+    uniqueCell.dataset['gamecell']="correct";
+    uniqueCell.style.backgroundColor = oddColor;
+}
+
+function touchEvent(event) {
+    let touchElement = document.elementFromPoint(event.targetTouches[0].clientX, event.targetTouches[0].clientY)
+    let rowColElement = touchElement.dataset['cord']
+    let rowColValue;
+    if(rowColElement !== undefined) {
+        rowColValue = rowColElement.split('-');
+        document.querySelectorAll('#rownum').forEach(value => value.innerText = rowColValue[1])
+        document.querySelectorAll('#colnum').forEach(value => value.innerText = rowColValue[2])
+        
+
+        // Eraser Logic
+        touchElement.style.backgroundColor = this.isEraserEnabled?this.eraserColor : this.activeColor;
+
+        // Cell Track
+        this.userTrack(rowColValue[1], rowColValue[2], this.cellCount,touchElement.style.backgroundColor);
+        this.cellCount++;
+    }
 }
 
 
 Pixelart.prototype.mobileDrag = function(){
     try {
-        this.rootElement.addEventListener('touchmove', function(event){
-            let touchElement = document.elementFromPoint(event.targetTouches[0].clientX, event.targetTouches[0].clientY)
-            let rowColElement = touchElement.dataset['cord']
-            let rowColValue;
-            if(rowColElement !== undefined) {
-                rowColValue = rowColElement.split('-');
-                document.querySelector('#rownum').innerText = rowColValue[1];
-                document.querySelector('#colnum').innerText = rowColValue[2];
-    
-                // Eraser Logic
-                touchElement.style.backgroundColor = this.isEraserEnabled?this.eraserColor : this.activeColor;
-    
-                // Cell Track
-                this.userTrack(rowColValue[1], rowColValue[2], this.cellCount,touchElement.style.backgroundColor);
-                this.cellCount++;
-            }
-            
-            
-        })
+        this.rootElement.addEventListener('touchmove', this.boundTouchEventListener)
     } catch (error) {
         
     }
-    
+}
+
+Pixelart.prototype.removeMobileDrag = function(){
+    try {
+        this.rootElement.removeEventListener('touchmove', this.boundTouchEventListener)
+    } catch (error) {
+        
+    }
 }
 
 Pixelart.prototype.bindcolorPicker = function(){
@@ -277,7 +300,9 @@ Pixelart.prototype.resizeGrid = function(){
 // Eye Dropper Logic
 Pixelart.prototype.eyedropper = function(backgroundColor) {
     this.setActiveColor(rgb2hex(backgroundColor))
-    this.iseyeDropperEnabled = false
+    this.iseyeDropperEnabled = false;
+    document.querySelector('.leftbar--eyedropper').classList.remove('active');
+    document.querySelector('.leftbar--edit').classList.add('active');
 }
 
 Pixelart.prototype.leftBar = function() {
@@ -288,90 +313,120 @@ Pixelart.prototype.leftBar = function() {
         console.log(menuItem)
         switch(menuItem) {
             case 'eraser':
-                document.querySelector('.active').classList.remove('active');
-                context.isEraserEnabled = true;
-                document.body.style.cursor = "url('./eraser.png'), default";
-                document.querySelector('.leftbar--eraser').classList.add('active');
+                if(!context.isGameMenuEnabled) {
+                    document.querySelector('.active').classList.remove('active');
+                    context.isEraserEnabled = true;
+                    
+                    document.body.style.cursor = "url('./eraser.png'), default";
+                    document.querySelector('.leftbar--eraser').classList.add('active');
+                }
+                
                 break;
             case 'edit':
                 document.querySelector('.active').classList.remove('active');
                 context.isEraserEnabled = false;
+                context.isGameMenuEnabled = false;
+                if(!context.isEditModeEnabled){
+                    this.row = 20;
+                    this.col = 20;
+                    context.editMode();  
+                }       
                 document.body.style.cursor = "url('./pencil.png'), default";
                 document.querySelector('.leftbar--edit').classList.add('active');
                 break;
             case 'togglegrid':
-                document.querySelector('.active').classList.remove('active');
-                if(context.rootElement.classList.contains('mainboard-outline')) {
-                    context.rootElement.classList.remove('mainboard-outline');
-                } else {
-                    context.rootElement.classList.add('mainboard-outline');
+                if(!context.isGameMenuEnabled) {
+                    document.querySelector('.active').classList.remove('active');
+                    if(context.rootElement.classList.contains('mainboard-outline')) {
+                        context.rootElement.classList.remove('mainboard-outline');
+                    } else {
+                        context.rootElement.classList.add('mainboard-outline');
+                    }
+                    document.querySelector('.leftbar--togglegrid').classList.add('active');
+                    setTimeout(function(){
+                        document.querySelector('.leftbar--togglegrid').classList.remove('active');
+                        document.querySelector('.leftbar--edit').classList.add('active');
+                        context.isEraserEnabled = false;
+                        document.body.style.cursor = "url('./pencil.png'), default";
+                    },800)
                 }
-                document.querySelector('.leftbar--togglegrid').classList.add('active');
-                setTimeout(function(){
-                    document.querySelector('.leftbar--togglegrid').classList.remove('active');
-                    document.querySelector('.leftbar--edit').classList.add('active');
-                    context.isEraserEnabled = false;
-                    document.body.style.cursor = "url('./pencil.png'), default";
-                },800)
                 
                 break;
             case 'clear':
-                document.querySelector('.active').classList.remove('active');
-                document.querySelectorAll('div[data-cord]').forEach(value => value.style.backgroundColor='');
-                context.cellTrack = [];
-                context.cellCount = 0;
-                
-                document.querySelector('.leftbar--clear').classList.add('active');
-                setTimeout(function(){
-                    document.querySelector('.leftbar--clear').classList.remove('active');
-                    document.querySelector('.leftbar--edit').classList.add('active');
-                    context.isEraserEnabled = false;
-                    document.body.style.cursor = "url('./pencil.png'), default";
-                },800)
+                if(!context.isGameMenuEnabled) {
+                    document.querySelector('.active').classList.remove('active');
+                    document.querySelectorAll('div[data-cord]').forEach(value => value.style.backgroundColor='');
+                    context.cellTrack = [];
+                    context.cellCount = 0;
+                    document.querySelector('.leftbar--clear').classList.add('active');
+                    setTimeout(function(){
+                        document.querySelector('.leftbar--clear').classList.remove('active');
+                        document.querySelector('.leftbar--edit').classList.add('active');
+                        context.isEraserEnabled = false;
+                        document.body.style.cursor = "url('./pencil.png'), default";
+                    },800)
+                }
                 
                 break;
             case 'download':
-                document.querySelector('.active').classList.remove('active');
-                context.downloadGrid();
-                document.querySelector('.leftbar--download').classList.add('active');
-                setTimeout(function(){
-                    document.querySelector('.leftbar--download').classList.remove('active');
-                    context.isEraserEnabled = false;
-                    document.querySelector('.leftbar--edit').classList.add('active');
-                    document.body.style.cursor = "url('./pencil.png'), default";
-                },500)
+                if(!context.isGameMenuEnabled) {
+                    document.querySelector('.active').classList.remove('active');
+                    context.downloadGrid();
+                    
+                    document.querySelector('.leftbar--download').classList.add('active');
+                    setTimeout(function(){
+                        document.querySelector('.leftbar--download').classList.remove('active');
+                        context.isEraserEnabled = false;
+                        document.querySelector('.leftbar--edit').classList.add('active');
+                        document.body.style.cursor = "url('./pencil.png'), default";
+                    },500)
+                }
                 break;
             case 'undo':
-                document.querySelector('.active').classList.remove('active');
-                context.undoMenu();
-                document.querySelector('.leftbar--undo').classList.add('active');
-                setTimeout(function(){
-                    document.querySelector('.leftbar--undo').classList.remove('active');
-                    context.isEraserEnabled = false;
-                    document.querySelector('.leftbar--edit').classList.add('active');
-                    document.body.style.cursor = "url('./pencil.png'), default";
-                },500)
+                if(!context.isGameMenuEnabled) {
+                    document.querySelector('.active').classList.remove('active');
+                    context.undoMenu();
+                    
+                    document.querySelector('.leftbar--undo').classList.add('active');
+                    setTimeout(function(){
+                        document.querySelector('.leftbar--undo').classList.remove('active');
+                        context.isEraserEnabled = false;
+                        document.querySelector('.leftbar--edit').classList.add('active');
+                        document.body.style.cursor = "url('./pencil.png'), default";
+                    },500)
+                }
                 break;
             case 'redo':
-                document.querySelector('.active').classList.remove('active');
-                context.redoMenu();
-                document.querySelector('.leftbar--redo').classList.add('active');
-                setTimeout(function(){
-                    document.querySelector('.leftbar--redo').classList.remove('active');
-                    context.isEraserEnabled = false;
-                    document.querySelector('.leftbar--edit').classList.add('active');
-                    document.body.style.cursor = "url('./pencil.png'), default";
-                },500)
+                if(!context.isGameMenuEnabled) {
+                    document.querySelector('.active').classList.remove('active');
+                    context.redoMenu();
+                    document.querySelector('.leftbar--redo').classList.add('active');
+                    
+                    setTimeout(function(){
+                        document.querySelector('.leftbar--redo').classList.remove('active');
+                        context.isEraserEnabled = false;
+                        document.querySelector('.leftbar--edit').classList.add('active');
+                        document.body.style.cursor = "url('./pencil.png'), default";
+                    },500)
+                }
                 break;
             case 'eyedropper':
-                document.querySelector('.active').classList.remove('active');
-                context.eyeDropperMenu();
-                document.querySelector('.leftbar--eyedropper').classList.add('active');
+                if(!context.isGameMenuEnabled) {
+                    context.isEraserEnabled = false;
+                    document.querySelector('.active').classList.remove('active');
+                    context.eyeDropperMenu();
+                    document.querySelector('.leftbar--eyedropper').classList.add('active');
+                }
                 break;
             case 'game':
                 document.querySelector('.active').classList.remove('active');
                 context.isGameMenuEnabled = true;
-                context.infinityGame();
+                context.isEditModeEnabled = false;
+                context.isEraserEnabled = false;
+                document.querySelector('.rightbar').style.display = "none";
+                document.querySelector('.gamebar').style.display = "flex";
+                document.body.style.cursor = "default";
+                context.gameMode();
                 document.querySelector('.leftbar--logo').classList.add('active');
                 break;
             default:
@@ -429,23 +484,24 @@ Pixelart.prototype.redoMenu = function(){
     }
 }
 
-Pixelart.prototype.animate = function(){
-    document.querySelectorAll('div[data-cord]').forEach(value => value.style.backgroundColor='');
-    let context = this;
-    setTimeout(function(){
-        context.cellTrack.forEach(value => document.querySelector(`[data-cord='col-${value.row}-${value.col}']`).style.backgroundColor = context.activeColor)
-        // this.cellTrack.forEach(value => console.log(value))
-    }, 2000)
-    
+Pixelart.prototype.editMode = function(){
+    document.querySelector('.rightbar').style.display = "flex";
+    document.querySelector('.gamebar').style.display = "none";
+    this.init();
+    this.bindEvent();
+    this.mobileDrag();
+    this.removeBindGameEvent();
 }
+
 
 // Fun Game
 
-Pixelart.prototype.infinityGame = function(){
+Pixelart.prototype.gameMode = function(){
     this.row = 4;
     this.col = 4;
     this.init();
     this.removeBindEvent();
+    this.removeMobileDrag();
     this.addBindGameEvent();
 }
 
@@ -465,9 +521,7 @@ Pixelart.prototype.generateRandomColor = function() {
     }
 }
 
-Pixelart.prototype.getRandomCell = function() {
-	return Math.floor(Math.random() * this.size)
-}
+
 
 
 
@@ -480,10 +534,27 @@ var hexDigits = new Array
 
 //Function to convert rgb color to hex format
 function rgb2hex(rgb) {
-    rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
-    return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
+    try{
+        rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+        return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
+    }catch(error){
+        
+    }
+    
 }
 
 function hex(x) {
     return isNaN(x) ? "00" : hexDigits[(x - x % 16) / 16] + hexDigits[x % 16];
 }
+
+// Disable F12 shortcut key
+
+// document.onkeydown = function (event)
+// {
+//      event = (event || window.event);
+//      if (event.keyCode == 123 || event.keyCode == 18)
+//      {
+//            alert("Developer Tool is not allowed here");
+//            return false;
+//      }
+// }

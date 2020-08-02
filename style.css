@@ -63,6 +63,10 @@ body {
     text-align: center;
 }
 
+span {
+    font-size: 2rem;
+}
+
 .rightbar--gridsize {
     display: flex;
     justify-content: space-evenly;
@@ -388,11 +392,11 @@ button:focus {
         padding: 0;
     }
 
-    .rightbar {
+    .rightbar,.gamebar {
         margin-bottom: .5rem;
     }
 
-    .rightbar > * {
+    .rightbar, .gamebar > * {
         margin-right: 0.2rem;
     }
 
@@ -439,7 +443,7 @@ button:focus {
         flex-direction: row;
     }
 
-    .rightbar {
+    .rightbar, .gamebar {
         flex-direction: row;
     }
 }
