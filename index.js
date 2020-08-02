@@ -218,10 +218,9 @@ Pixelart.prototype.removeMobileDrag = function(){
 }
 
 Pixelart.prototype.bindcolorPicker = function(){
-    document.querySelector('#colorpicker').addEventListener('input', function(event){
-        this.activeColor = event.target.value;
-        event.target.style.backgroundColor = event.target.value;
-    }.bind(this))
+    document.querySelectorAll('#colorpicker').forEach( value => {value.addEventListener('input', function(event){
+        this.setActiveColor(event.target.value)
+    }.bind(this))})
 }
 
 Pixelart.prototype.bindGridWidth = function(){
@@ -248,9 +247,10 @@ Pixelart.prototype.bindRightMenu = function(){
             this.setActiveColor(event.target.dataset['cellcolor'])
         }
 
-        if(event.target.dataset['customcolor']){
-            console.log(event.target.value);
-        }
+        // if(event.target.dataset['customcolor']){
+        //     console.log(event.target.value)
+        //     this.setActiveColor(event.target.value);
+        // }
 
         // set Frame
         event.target.dataset['frame'] && this.setFrame(event.target.dataset['frame']);
@@ -315,6 +315,7 @@ Pixelart.prototype.leftBar = function() {
         switch(menuItem) {
             case 'eraser':
                 if(!context.isGameMenuEnabled) {
+                    context.isEditModeEnabled = true;
                     document.querySelector('.active').classList.remove('active');
                     context.isEraserEnabled = true;
                     
@@ -326,6 +327,7 @@ Pixelart.prototype.leftBar = function() {
             case 'edit':
                 document.querySelector('.active').classList.remove('active');
                 context.isEraserEnabled = false;
+                
                 context.isGameMenuEnabled = false;
                 if(!context.isEditModeEnabled){
                     this.row = 20;
@@ -337,6 +339,7 @@ Pixelart.prototype.leftBar = function() {
                 break;
             case 'togglegrid':
                 if(!context.isGameMenuEnabled) {
+                    context.isEditModeEnabled = true;
                     document.querySelector('.active').classList.remove('active');
                     if(context.rootElement.classList.contains('mainboard-outline')) {
                         context.rootElement.classList.remove('mainboard-outline');
@@ -355,6 +358,7 @@ Pixelart.prototype.leftBar = function() {
                 break;
             case 'clear':
                 if(!context.isGameMenuEnabled) {
+                    context.isEditModeEnabled = true;
                     document.querySelector('.active').classList.remove('active');
                     document.querySelectorAll('div[data-cord]').forEach(value => value.style.backgroundColor='');
                     context.cellTrack = [];
@@ -371,6 +375,7 @@ Pixelart.prototype.leftBar = function() {
                 break;
             case 'download':
                 if(!context.isGameMenuEnabled) {
+                    context.isEditModeEnabled = true;
                     document.querySelector('.active').classList.remove('active');
                     context.downloadGrid();
                     
@@ -385,6 +390,7 @@ Pixelart.prototype.leftBar = function() {
                 break;
             case 'undo':
                 if(!context.isGameMenuEnabled) {
+                    context.isEditModeEnabled = true;
                     document.querySelector('.active').classList.remove('active');
                     context.undoMenu();
                     
@@ -399,6 +405,7 @@ Pixelart.prototype.leftBar = function() {
                 break;
             case 'redo':
                 if(!context.isGameMenuEnabled) {
+                    context.isEditModeEnabled = true;
                     document.querySelector('.active').classList.remove('active');
                     context.redoMenu();
                     document.querySelector('.leftbar--redo').classList.add('active');
@@ -413,6 +420,7 @@ Pixelart.prototype.leftBar = function() {
                 break;
             case 'eyedropper':
                 if(!context.isGameMenuEnabled) {
+                    context.isEditModeEnabled = true;
                     document.body.style.cursor = "crosshair";
                     context.isEraserEnabled = false;
                     document.querySelector('.active').classList.remove('active');
