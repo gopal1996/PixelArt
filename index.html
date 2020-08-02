@@ -13,7 +13,7 @@
     <div class="container">
         <div class="leftbar">
             <div class="leftbar--logo">
-                <i class="fa fa-snowflake-o" aria-hidden="true" data-menu="logo"></i>
+                <i class="fa fa-gamepad" aria-hidden="true" data-menu="game"></i>
             </div>
             <div class="leftbar--edit active">
                 <i class="fa fa-pencil" aria-hidden="true" data-menu="edit"></i>
@@ -49,7 +49,7 @@
         <div class="mainboard-container">
             <div class="mainboard"></div>
         </div>
-        <div class="rightbar">
+        <div class="rightbar" style="display: none;">
             <div class="rightbar--progress">
                 <input type="range" min="1" max="100" value="100" id="widthrange">
             </div>
@@ -162,6 +162,21 @@
                     </div>
                 </div>
                 
+            </div>
+        </div>
+
+        <div class="gamebar">
+            <div class="gamebar--highscore">
+                <p>High Score</p>
+                <span class="highscorecount">0</span>
+            </div>
+            <div class="gamebar--scores">
+                <p>Current Score</p>
+                <span class="currentscorecount">0</span>
+            </div>
+            <div class="gamebar-timeout">
+                <p>Time</p>
+                <span class="timeout">0</span>
             </div>
         </div>
     </div>

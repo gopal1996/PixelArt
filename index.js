@@ -2,10 +2,17 @@ function Pixelart(element, row, col) {
     this.activeColor = '#000';
     this.eraserColor = '#fff';
     this.isEraserEnabled = false;
+    this.isMouseClick = false;
+    this.isGameMenuEnabled = false;
     this.rootElement = document.querySelector(element);
     this.row = row;
     this.col = col;
+    this.score = 0;
     this.cellTrack = [];
+    this.boundMouseUpListener = mouseUpListener.bind(this)
+    this.boundMouseOverListener = mouseOverListener.bind(this)
+    this.boundMouseDownListener = mouseDownListener.bind(this)
+    this.boundGameMouseDownListener = gameMouseDown.bind(this)
     this.cellCount = 1;
     this.iseyeDropperEnabled = false;
 
@@ -21,6 +28,7 @@ function Pixelart(element, row, col) {
 Pixelart.prototype.init = function() {
     document.querySelector('#height').value = Number(this.row);
     document.querySelector('#width').value = Number(this.col);
+    let { color, oddColor } = this.generateRandomColor();
     this.rootElement.innerHTML = '';
     let fragmentElement = document.createDocumentFragment();
     for(let i=0;i<this.row;i++) {
@@ -29,61 +37,136 @@ Pixelart.prototype.init = function() {
         for(let j=0;j<this.col;j++) {
             let colElement = document.createElement('div');
             colElement.classList.add('cell');
+            // Game logic
+            if(this.isGameMenuEnabled){
+                colElement.dataset['gamecell'] = "wrong";
+                colElement.style.backgroundColor = color;
+            }
+
             colElement.dataset['cord']=`col-${i}-${j}`;
             rowElement.appendChild(colElement);
         }
         fragmentElement.appendChild(rowElement)
     }
     this.rootElement.appendChild(fragmentElement)
+    this.isGameMenuEnabled && this.addOddColorCell(oddColor);
+}
+
+
+function mouseDownListener(event){
+    console.log(this)
+    this.isMouseClick = true;
+    this.cellTrack.length = this.cellCount;
+    if(event.target.dataset['cord']) {
+        // Eyedropper Logic
+        this.iseyeDropperEnabled && this.eyedropper(event.target.style.backgroundColor)
+        
+        // Eraser logic
+        event.target.style.backgroundColor = this.isEraserEnabled?this.eraserColor : this.activeColor;
+
+        // cell Track
+        let rowColValue = event.target.dataset['cord'].split('-');
+        this.userTrack(rowColValue[1], rowColValue[2],this.cellCount,event.target.style.backgroundColor);
+        this.cellCount++;
+    }
+}
+
+function mouseOverListener(event){
+    let rowColElement = event.target.dataset['cord'];
+    let rowColValue;
+    if(rowColElement !== undefined) {
+        rowColValue = rowColElement.split('-');
+        document.querySelector('#rownum').innerText = rowColValue[1];
+        document.querySelector('#colnum').innerText = rowColValue[2];
+    }
+    if(this.isMouseClick) {
+        // Eraser Logic
+        event.target.style.backgroundColor = this.isEraserEnabled?this.eraserColor : this.activeColor;
+
+        // Cell Track
+        this.userTrack(rowColValue[1], rowColValue[2], this.cellCount,event.target.style.backgroundColor);
+        this.cellCount++;
+    }
+}
+
+function mouseUpListener(event){
+    this.isMouseClick = false;
 }
 
 Pixelart.prototype.bindEvent = function() {
-    let context = this;
-    let isMouseClick = false;
-    this.rootElement.addEventListener('mousedown', function(event){
-        isMouseClick = true;
-        context.cellTrack.length = context.cellCount;
-        if(event.target.dataset['cord']) {
-            // Eyedropper Logic
-            context.iseyeDropperEnabled && context.eyedropper(event.target.style.backgroundColor)
-            
-            // Eraser logic
-            event.target.style.backgroundColor = context.isEraserEnabled?context.eraserColor : context.activeColor;
-
-            // cell Track
-            let rowColValue = event.target.dataset['cord'].split('-');
-            context.userTrack(rowColValue[1], rowColValue[2],context.cellCount,event.target.style.backgroundColor);
-            context.cellCount++;
-        }
-    });
-
-    this.rootElement.addEventListener('mouseover', function(event){
-        let rowColElement = event.target.dataset['cord'];
-        let rowColValue;
-        if(rowColElement !== undefined) {
-            rowColValue = rowColElement.split('-');
-            document.querySelector('#rownum').innerText = rowColValue[1];
-            document.querySelector('#colnum').innerText = rowColValue[2];
-        }
-        if(isMouseClick) {
-            // Eraser Logic
-            event.target.style.backgroundColor = context.isEraserEnabled?context.eraserColor : context.activeColor;
-
-            // Cell Track
-            context.userTrack(rowColValue[1], rowColValue[2], context.cellCount,event.target.style.backgroundColor);
-            context.cellCount++;
-        }
-        
-    });
-
-
-    this.rootElement.addEventListener('mouseup', function(event){
-        isMouseClick = false;
-    });
-
-
+    this.rootElement.addEventListener('mousedown', this.boundMouseDownListener);
+    this.rootElement.addEventListener('mouseover', this.boundMouseOverListener);
+    this.rootElement.addEventListener('mouseup', this.boundMouseUpListener);
     
 }
+
+// Remove Bind Event
+
+Pixelart.prototype.removeBindEvent = function() {
+    this.rootElement.removeEventListener('mousedown', this.boundMouseDownListener);
+    this.rootElement.removeEventListener('mouseover', this.boundMouseOverListener);
+    this.rootElement.removeEventListener('mouseup', this.boundMouseUpListener); 
+}
+
+function gameMouseDown(event){
+    let target = event.target.dataset['gamecell'];
+    if(target === 'correct'){
+        this.score++;
+        this.col++;
+        this.row++;
+        this.resetGrid();
+        this.setScore();
+        this.init();
+    }else{
+        this.rootElement.classList.add('shake');
+        setTimeout(function(){
+            this.rootElement.classList.remove('shake');
+            this.score = 0;
+            this.col = 4;
+            this.row = 4;
+            this.resetGrid();
+            this.setScore();
+            this.init();
+        }.bind(this), 800)
+    }
+}
+
+Pixelart.prototype.addBindGameEvent = function() {
+    this.rootElement.addEventListener('mousedown', this.boundGameMouseDownListener)
+}
+
+Pixelart.prototype.removeBindGameEvent = function() {
+    this.rootElement.addEventListener('mousedown', this.boundGameMouseDownListener)
+}
+
+Pixelart.prototype.setScore = function(){
+    // document.querySelector('.score').innerHTML = this.score;
+}
+
+Pixelart.prototype.resetGrid = function(){
+    this.rootElement.innerHTML = '';
+}
+
+Pixelart.prototype.getRandomCell = function() {
+    console.log(this.row)
+    let row = Math.floor(Math.random() * Number(this.row));
+    let col = Math.floor(Math.random() * Number(this.col));
+    console.log(col)
+	return {
+        row, col
+    }
+}
+
+Pixelart.prototype.addOddColorCell = function(oddColor) {
+    
+    let row = this.getRandomCell();
+    // console.log(row);
+    // console.log(this.getRandomCell())
+    // let uniqueCell = document.querySelector(`div[data-cord='${row}-${col}']`);
+    // uniqueCell.dataset['gamecell']="correct";
+    // uniqueCell.style.backgroundColor = oddColor;
+}
+
 
 Pixelart.prototype.mobileDrag = function(){
     try {
@@ -105,7 +188,7 @@ Pixelart.prototype.mobileDrag = function(){
             }
             
             
-        }.bind(this))
+        })
     } catch (error) {
         
     }
@@ -286,6 +369,12 @@ Pixelart.prototype.leftBar = function() {
                 context.eyeDropperMenu();
                 document.querySelector('.leftbar--eyedropper').classList.add('active');
                 break;
+            case 'game':
+                document.querySelector('.active').classList.remove('active');
+                context.isGameMenuEnabled = true;
+                context.infinityGame();
+                document.querySelector('.leftbar--logo').classList.add('active');
+                break;
             default:
                 context.printTrack();
                 // context.animate();
@@ -351,11 +440,40 @@ Pixelart.prototype.animate = function(){
     
 }
 
+// Fun Game
+
+Pixelart.prototype.infinityGame = function(){
+    this.row = 4;
+    this.col = 4;
+    this.init();
+    this.removeBindEvent();
+    this.addBindGameEvent();
+}
+
+Pixelart.prototype.generateRandomColor = function() {
+    let ratio = 0.618033988749895;
+
+    let hue = (Math.random() + ratio) % 1;
+    let saturation = Math.round(Math.random() * 100) % 85;
+    let lightness = Math.round(Math.random() * 100) % 85;
+
+    let color = 'hsl(' + Math.round(360 * hue) + ',' + saturation + '%,' + lightness + '%)';
+    let oddColor = 'hsl(' + Math.round(360 * hue) + ',' + saturation + '%,' + (lightness + 5) + '%)';
+
+    return {
+        color,
+        oddColor
+    }
+}
+
+Pixelart.prototype.getRandomCell = function() {
+	return Math.floor(Math.random() * this.size)
+}
 
 
 
 // Initilaize Pixelart
-new Pixelart('.mainboard', 20, 20);
+var startApp = new Pixelart('.mainboard', 20, 20);
 
 // Convert rgb to hex
 var hexDigits = new Array
@@ -363,10 +481,10 @@ var hexDigits = new Array
 
 //Function to convert rgb color to hex format
 function rgb2hex(rgb) {
- rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
- return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
+    rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+    return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
 }
 
 function hex(x) {
-  return isNaN(x) ? "00" : hexDigits[(x - x % 16) / 16] + hexDigits[x % 16];
- }
+    return isNaN(x) ? "00" : hexDigits[(x - x % 16) / 16] + hexDigits[x % 16];
+}
