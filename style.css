@@ -147,7 +147,7 @@ span {
 .mainboard-container {
     display: flex;
     margin: 10px;
-    /* border: 1px solid #ccc; */
+    border: 1px solid #ccc;
     border-radius: 5px;
     padding: 2px;
     background-color: #fff;
@@ -484,6 +484,7 @@ button:focus {
         padding: 0;
         margin: 0;
         height: 100%;
+        border: none;
     }
 
     .rightbar, .gamebar {

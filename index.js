@@ -26,7 +26,8 @@ function Pixelart(element, row, col) {
     
     // get highscore
     this.getHighScore();
-    this.getName();
+    // this.getName();
+
     // pixelart default mode
     this.editMode();
 
@@ -104,9 +105,9 @@ function gameMouseDown(event){
     }
 }
 
-Pixelart.prototype.getName = function() {
-    prompt("Please enter your name");
-}
+// Pixelart.prototype.getName = function() {
+//     prompt("Please enter your name");
+// }
 
 Pixelart.prototype.init = function() {
     document.querySelector('#height').value = Number(this.row);
@@ -552,17 +553,17 @@ function hex(x) {
 }
 
 // Disable F12 shortcut key
-document.onkeydown = function (event){
-     event = (event || window.event);
-     if (event.keyCode == 123)
-     {
-         alert("function disabled")
-        return false;
-     } else if(event.ctrlKey && event.shiftKey && event.keyCode==73) {
-        alert("function disabled")
-        return false;
-     }
-}
+// document.onkeydown = function (event){
+//      event = (event || window.event);
+//      if (event.keyCode == 123)
+//      {
+//          alert("function disabled")
+//         return false;
+//      } else if(event.ctrlKey && event.shiftKey && event.keyCode==73) {
+//         alert("function disabled")
+//         return false;
+//      }
+// }
 
 // Initilaize Pixelart
 var startApp = new Pixelart('.mainboard', 20, 20);
