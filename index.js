@@ -26,7 +26,7 @@ function Pixelart(element, row, col) {
     
     // get highscore
     this.getHighScore();
-
+    this.getName();
     // pixelart default mode
     this.editMode();
 
@@ -102,6 +102,10 @@ function gameMouseDown(event){
             this.init();
         }.bind(this), 800)
     }
+}
+
+Pixelart.prototype.getName = function() {
+    prompt("Please enter your name");
 }
 
 Pixelart.prototype.init = function() {
