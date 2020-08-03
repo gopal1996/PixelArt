@@ -5,6 +5,7 @@ function Pixelart(element, row, col) {
     this.col = col;
     this.activeColor = '#000';
     this.eraserColor = '#fff';
+    this.activeOddColor = '';
     this.cellTrack = [];
     this.cellCount = 1;
     this.score = 0;
@@ -81,8 +82,10 @@ function mouseUpListener(event){
 }
 
 function gameMouseDown(event){
-    let target = event.target.dataset['gamecell'];
-    if(target === 'correct'){
+    // let target = event.target.dataset['gamecell'];
+    let bgColor = event.target.style.backgroundColor;
+    console.log(bgColor, this.activeOddColor)
+    if(bgColor === this.activeOddColor){
         this.score++;
         this.col++;
         this.row++;
@@ -123,7 +126,7 @@ Pixelart.prototype.init = function() {
             colElement.classList.add('cell');
             // Game logic
             if(this.isGameMenuEnabled){
-                colElement.dataset['gamecell'] = "wrong";
+                // colElement.dataset['gamecell'] = "wrong";
                 colElement.style.backgroundColor = color;
             }
 
@@ -528,8 +531,10 @@ Pixelart.prototype.getRandomCell = function() {
 Pixelart.prototype.addOddColorCell = function(oddColor) {
     let {row, col} = this.getRandomCell();
     let uniqueCell = document.querySelector(`div[data-cord='col-${row}-${col}']`);
-    uniqueCell.dataset['gamecell']="correct";
+    // uniqueCell.dataset['gamecell']="correct";
+    
     uniqueCell.style.backgroundColor = oddColor;
+    this.activeOddColor = uniqueCell.style.backgroundColor;
 }
 
 
