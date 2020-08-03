@@ -27,7 +27,6 @@ function Pixelart(element, row, col) {
     
     // get highscore
     this.getHighScore();
-    // this.getName();
 
     // pixelart default mode
     this.editMode();
@@ -106,10 +105,6 @@ function gameMouseDown(event){
         }.bind(this), 800)
     }
 }
-
-// Pixelart.prototype.getName = function() {
-//     prompt("Please enter your name");
-// }
 
 Pixelart.prototype.init = function() {
     document.querySelector('#height').value = Number(this.row);
@@ -570,4 +565,4 @@ function hex(x) {
 // }
 
 // Initilaize Pixelart
-var startApp = new Pixelart('.mainboard', 20, 20);
+new Pixelart('.mainboard', 20, 20);
