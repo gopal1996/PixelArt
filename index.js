@@ -293,7 +293,7 @@ Pixelart.prototype.undoMenu = function(){
                 document.querySelector(`[data-cord='col-${value.row}-${value.col}']`).style.backgroundColor = "";
             }
         })
-        console.log(this.cellTrack)
+        
     }
 }
 
@@ -522,7 +522,6 @@ Pixelart.prototype.getRandomCell = function() {
 
 Pixelart.prototype.addOddColorCell = function(oddColor) {
     let {row, col} = this.getRandomCell();
-    console.log(row, col)
     let uniqueCell = document.querySelector(`div[data-cord='col-${row}-${col}']`);
     uniqueCell.dataset['gamecell']="correct";
     uniqueCell.style.backgroundColor = oddColor;
@@ -549,17 +548,17 @@ function hex(x) {
 }
 
 // Disable F12 shortcut key
-// document.onkeydown = function (event){
-//      event = (event || window.event);
-//      if (event.keyCode == 123)
-//      {
-//          alert("function disabled")
-//         return false;
-//      } else if(event.ctrlKey && event.shiftKey && event.keyCode==73) {
-//         alert("function disabled")
-//         return false;
-//      }
-// }
+document.onkeydown = function (event){
+     event = (event || window.event);
+     if (event.keyCode == 123)
+     {
+         alert("function disabled")
+        return false;
+     } else if(event.ctrlKey && event.shiftKey && event.keyCode==73) {
+        alert("function disabled")
+        return false;
+     }
+}
 
 // Initilaize Pixelart
 var startApp = new Pixelart('.mainboard', 20, 20);
