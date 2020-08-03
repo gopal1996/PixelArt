@@ -84,7 +84,6 @@ function mouseUpListener(event){
 function gameMouseDown(event){
     // let target = event.target.dataset['gamecell'];
     let bgColor = event.target.style.backgroundColor;
-    console.log(bgColor, this.activeOddColor)
     if(bgColor === this.activeOddColor){
         this.score++;
         this.col++;
