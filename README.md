@@ -1,8 +1,8 @@
 # Pixel Art
 
 ## Sample Images
-![Pixel art](./screenshot/PixelArt.png)
-![Color Spotter](./screenshot/ColorSpotterGame.png)
+![Pixel art](https://github.com/gopal1996/PixelArt/blob/master/screenshot/PixelArt.PNG)
+![Color Spotter](https://github.com/gopal1996/PixelArt/blob/master/screenshot/ColorSpotterGame.PNG)
 
 ## Deployment from master:
 >   https://gopal1996.github.io/PixelArt/
