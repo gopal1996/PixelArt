@@ -18,7 +18,7 @@ body {
     box-sizing: border-box;
     overscroll-behavior: contain;
     height: 100%;
-    cursor: url('./pencil.png'), default;
+    cursor: url('../img/pencil.png'), default;
 }
 
 .container {
@@ -248,6 +248,7 @@ p {
 .rightbar--progress {
     display: flex;
     justify-content: center;
+    align-items: center;
 }
 
 /* Toggle Switch */
