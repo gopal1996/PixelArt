@@ -1,5 +1,9 @@
 # Pixel Art
 
+## Sample Images
+![Pixel art](./screenshot/PixelArt.png)
+![Color Spotter](./screenshot/ColorSpotterGame.png)
+
 ## Deployment from master:
 >   https://gopal1996.github.io/PixelArt/
 

@@ -349,6 +349,7 @@ Pixelart.prototype.leftBar = function() {
                     context.editMode();  
                 }       
                 document.body.style.cursor = "url('../img/pencil.png'), default";
+                console.log("pencil")
                 document.querySelector('.leftbar--edit').classList.add('active');
                 break;
             case 'togglegrid':
@@ -550,19 +551,6 @@ function rgb2hex(rgb) {
 function hex(x) {
     return isNaN(x) ? "00" : hexDigits[(x - x % 16) / 16] + hexDigits[x % 16];
 }
-
-// Disable F12 shortcut key
-// document.onkeydown = function (event){
-//      event = (event || window.event);
-//      if (event.keyCode == 123)
-//      {
-//          alert("function disabled")
-//         return false;
-//      } else if(event.ctrlKey && event.shiftKey && event.keyCode==73) {
-//         alert("function disabled")
-//         return false;
-//      }
-// }
 
 // Initilaize Pixelart
 new Pixelart('.mainboard', 20, 20);
