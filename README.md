@@ -1,12 +1,12 @@
-# Pixel Art Maker
-
-These are the main sections of the WebApp.
+# Pixel Art
 
 ## Deployment from master:
 >   https://gopal1996.github.io/PixelArt/
 
 ## Features
 
+* **Color Spotter Game**
+* **Draw mode**
 * **Undo**
 * **Redo**
 * **EyeDropper**
