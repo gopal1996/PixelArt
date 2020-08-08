@@ -26,5 +26,4 @@
 
 * **HTML 5**
 * **CSS 3**
-* **ES 6**
 * **Javascript**
