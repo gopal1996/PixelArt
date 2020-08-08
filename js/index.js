@@ -261,7 +261,7 @@ Pixelart.prototype.resizeGrid = function(){
 Pixelart.prototype.eyedropper = function(backgroundColor) {
     this.setActiveColor(rgb2hex(backgroundColor))
     this.iseyeDropperEnabled = false;
-    document.body.style.cursor = "url('../img/pencil.png'), default";
+    document.body.style.cursor = "url('./img/pencil.png'), default";
     document.querySelector('.leftbar--eyedropper').classList.remove('active');
     document.querySelector('.leftbar--edit').classList.add('active');
 }
@@ -348,8 +348,7 @@ Pixelart.prototype.leftBar = function() {
                     this.col = 20;
                     context.editMode();  
                 }       
-                document.body.style.cursor = "url('../img/pencil.png'), default";
-                console.log("pencil")
+                document.body.style.cursor = "url('./img/pencil.png'), default";
                 document.querySelector('.leftbar--edit').classList.add('active');
                 break;
             case 'togglegrid':
@@ -366,7 +365,7 @@ Pixelart.prototype.leftBar = function() {
                         document.querySelector('.leftbar--togglegrid').classList.remove('active');
                         document.querySelector('.leftbar--edit').classList.add('active');
                         context.isEraserEnabled = false;
-                        document.body.style.cursor = "url('../img/pencil.png'), default";
+                        document.body.style.cursor = "url('./img/pencil.png'), default";
                     },800)
                 }
                 
@@ -383,7 +382,7 @@ Pixelart.prototype.leftBar = function() {
                         document.querySelector('.leftbar--clear').classList.remove('active');
                         document.querySelector('.leftbar--edit').classList.add('active');
                         context.isEraserEnabled = false;
-                        document.body.style.cursor = "url('../img/pencil.png'), default";
+                        document.body.style.cursor = "url('./img/pencil.png'), default";
                     },800)
                 }
                 
@@ -399,7 +398,7 @@ Pixelart.prototype.leftBar = function() {
                         document.querySelector('.leftbar--download').classList.remove('active');
                         context.isEraserEnabled = false;
                         document.querySelector('.leftbar--edit').classList.add('active');
-                        document.body.style.cursor = "url('../img/pencil.png'), default";
+                        document.body.style.cursor = "url('./img/pencil.png'), default";
                     },500)
                 }
                 break;
@@ -414,7 +413,7 @@ Pixelart.prototype.leftBar = function() {
                         document.querySelector('.leftbar--undo').classList.remove('active');
                         context.isEraserEnabled = false;
                         document.querySelector('.leftbar--edit').classList.add('active');
-                        document.body.style.cursor = "url('../img/pencil.png'), default";
+                        document.body.style.cursor = "url('./img/pencil.png'), default";
                     },500)
                 }
                 break;
@@ -429,7 +428,7 @@ Pixelart.prototype.leftBar = function() {
                         document.querySelector('.leftbar--redo').classList.remove('active');
                         context.isEraserEnabled = false;
                         document.querySelector('.leftbar--edit').classList.add('active');
-                        document.body.style.cursor = "url('../img/pencil.png'), default";
+                        document.body.style.cursor = "url('./img/pencil.png'), default";
                     },500)
                 }
                 break;
